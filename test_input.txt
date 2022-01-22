@@ -1,0 +1,92 @@
+game-init
+game-start
+{
+  "gameState": {
+    "board": {
+      "board": [
+        [4, 0, 0, 0],
+        [1, 2, 2, 2],
+        [1, 1, 1, 2],
+        [0, 0, 0, 4]
+      ]
+    },
+    "scorePlayer0": 0, 
+    "scorePlayer1": 0
+  },
+  "turn": 0,
+  "player": 0
+}
+turn-init
+turn-start
+{
+  "gameState": {
+    "board": {
+      "board": [
+        [4, 0, 0, 0],
+        [1, 2, 2, 2],
+        [1, 1, 1, 2],
+        [0, 0, 0, 4]
+      ]
+    },
+    "scorePlayer0": 0, 
+    "scorePlayer1": 0
+  },
+  "turn": 0,
+  "player": 0
+}
+turn-init
+turn-start
+{
+  "gameState": {
+    "board": {
+      "board": [
+        [4, 0, 0, 0],
+        [1, 2, 2, 2],
+        [1, 1, 1, 2],
+        [0, 0, 0, 4]
+      ]
+    },
+    "scorePlayer0": 0, 
+    "scorePlayer1": 0
+  },
+  "turn": 0,
+  "player": 0
+}
+turn-init
+turn-start
+{
+  "gameState": {
+    "board": {
+      "board": [
+        [4, 0, 0, 0],
+        [1, 2, 2, 2],
+        [1, 1, 1, 2],
+        [0, 0, 0, 4]
+      ]
+    },
+    "scorePlayer0": 0, 
+    "scorePlayer1": 0
+  },
+  "turn": 0,
+  "player": 0
+}
+sleep 1
+turn-init
+turn-start
+{
+  "gameState": {
+    "board": {
+      "board": [
+        [4, 0, 0, 0],
+        [1, 2, 2, 2],
+        [1, 1, 1, 2],
+        [0, 0, 0, 4]
+      ]
+    },
+    "scorePlayer0": 0, 
+    "scorePlayer1": 0
+  },
+  "turn": 0,
+  "player": 0
+}
+throw
