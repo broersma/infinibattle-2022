@@ -27,13 +27,6 @@ enum State {
     TurnStarting,
 }
 
-enum PieceType {
-    Empty = 0,
-    Player1LPiece = 1,
-    Player2LPiece = 2,
-    NeutralPiece = 4,
-}
-
 impl fmt::Display for State {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{:?}", self)
@@ -102,8 +95,7 @@ impl State {
             (GameIniting, GameInit) => Ok(GameStarting),
 
             (GameStarting, GameStart(stdin)) => {
-                // TODO: do something with board state?
-                let _game_state = parse_game_state_json(stdin);
+                let game_state = parse_game_state_json(stdin);
 
                 Ok(TurnIniting)
             },
@@ -114,20 +106,15 @@ impl State {
             (TurnStarting, TurnStart(stdin)) => {
                 let game_state = parse_game_state_json(stdin);
 
-                // TODO: check if this assumption is right (game_state["player"] + 1 == current_player )
-                let current_player = game_state["player"].as_u8().unwrap() + 1;
-
                 let board_game_state = BoardState::load(game_state);
 
-                let optimal_move = board_game_state.calculate_optimal_move(current_player);
-
-                
-                // TODO: write optimal move!
-                let place_pieces_command_json = json::object! {
-                    "playerLPieceCoordinates": optimal_move.lPiece,
-                    "neutralPieceCoordinates": optimal_move.neutralPieces
-                };
-                writeln!(output, "{}", place_pieces_command_json)?;
+                if let Some(optimal_move) = board_game_state.calculate_optimal_move(5) {
+                    let place_pieces_command_json = json::object! {
+                        "playerLPieceCoordinates": [optimal_move.lPiece[0].to_vec(), optimal_move.lPiece[1].to_vec(), optimal_move.lPiece[2].to_vec(), optimal_move.lPiece[3].to_vec()].to_vec(),
+                        "neutralPieceCoordinates": [optimal_move.neutralPieces[0].to_vec(), optimal_move.neutralPieces[1].to_vec()].to_vec()
+                    };
+                    writeln!(output, "{}", place_pieces_command_json)?;
+                }
 
                 writeln!(output, "turn-end")?;
                 Ok(TurnIniting)
@@ -180,9 +167,9 @@ mod tests {
     }
 
     #[test]
-    fn app_initing_app_init_write_bot_start() { 
+    fn app_initing_app_init_write_bot_start() {
         let buffer = &mut Vec::new();
-        
+
         State::AppIniting.next(&Transition::AppInit, buffer).unwrap();
 
         assert_eq!(buffer, "bot-start\n".as_bytes());
