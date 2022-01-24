@@ -6,7 +6,9 @@ My bot ("Harry") for Infinibattle 2022 - the ["L Game"](https://en.wikipedia.org
 
 ## Post-mortem
 
-Sadly, I didn't finish in time to participate in the actual battle. However, I learned a lot about Rust, and some things are even starting to click! :open_mouth:
+The bot works and seems to be able to beat the randomly moving StarterBot (mainly by luck).
+
+Sadly, I didn't finish the code in time to participate in the actual battle. However, I learned a lot about Rust, and some things are even starting to click! :open_mouth:
 
 I really like the bot's enum-based state machine in `main.rs`, used for parsing the input correctly (it was also quite flexible when I eventually found out where I went wrong in implementing the match protocol).
 
