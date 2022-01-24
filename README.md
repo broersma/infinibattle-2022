@@ -1,6 +1,8 @@
-# Infinibattle-2022
+![harry_crop](https://user-images.githubusercontent.com/6991518/150874310-2175ab11-cad5-4049-9ee4-3ca6903d8c54.jpg)
 
-My bot for Infinibattle 2022 - the ["L Game"](https://en.wikipedia.org/wiki/L_game) edition. Infinibattle is a game-AI bot arena tournament hosted and organised by [Infi](https://www.infi.nl/).
+# Infinibattle 2022
+
+My bot ("Harry") for Infinibattle 2022 - the ["L Game"](https://en.wikipedia.org/wiki/L_game) edition. Infinibattle is a game-AI bot arena tournament hosted and organised by [Infi](https://www.infi.nl/).
 
 ## Post-mortem
 
