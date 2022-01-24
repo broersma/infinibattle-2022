@@ -10,12 +10,12 @@ use board_state::BoardState;
 #[derive(Debug)]
 enum Transition<'a> {
     AppInit,
-    GameInit,
-    GameStart(&'a io::Stdin),
-    TurnInit,
-    TurnStart(&'a io::Stdin),
+    GameInit(&'a io::Stdin),
+    GameStart,
+    TurnInit(&'a io::Stdin),
+    TurnStart,
     Throw,
-    Sleep(u64),
+    Sleep,
 }
 
 #[derive(Debug)]
@@ -24,7 +24,7 @@ enum State {
     GameIniting,
     GameStarting,
     TurnIniting,
-    TurnStarting,
+    TurnStarting(BoardState),
 }
 
 impl fmt::Display for State {
@@ -43,22 +43,13 @@ impl<'a> Transition<'a> {
     fn parse(line: &str, stdin: &'a io::Stdin) -> Transition<'a> {
         use Transition::*;
         match line {
-            "game-init" => GameInit,
-            "game-start" => GameStart(stdin),
-            "turn-init" => TurnInit,
-            "turn-start" => TurnStart(stdin),
+            "game-init" => GameInit(stdin),
+            "game-start" => GameStart,
+            "turn-init" => TurnInit(stdin),
+            "turn-start" => TurnStart,
             "throw" => Throw,
-            _ => {
-                // TODO: make this more idiomatic, if possible
-                if line.starts_with("sleep") {
-                    let mut split = line.split(" ");
-                    split.next();
-                    let seconds = split.next().unwrap().parse::<u64>().unwrap();
-                    Sleep(seconds)
-                } else {
-                    panic!("cannot parse Transition from line \"{}\"", line)
-                }
-            }
+            "sleep" => Sleep,
+            _ => panic!("cannot parse Transition from line \"{}\"", line)
         }
     }
 }
@@ -89,37 +80,43 @@ impl State {
         match (&self, transition) {
             (AppIniting, AppInit) => {
                 writeln!(output, "bot-start")?;
+                output.flush()?;
+                io::stdout().flush()?;
                 Ok(GameIniting)
             }
 
-            (GameIniting, GameInit) => Ok(GameStarting),
+            (GameIniting, GameInit(stdin)) => {
+                let _game_state = parse_game_state_json(stdin);
 
-            (GameStarting, GameStart(stdin)) => {
-                let game_state = parse_game_state_json(stdin);
-
-                Ok(TurnIniting)
+                Ok(GameStarting)
             },
 
-            (TurnIniting, TurnInit) => Ok(TurnStarting),
-            (TurnIniting, Sleep(seconds)) => { sleep(Duration::from_secs(*seconds)); Ok(TurnIniting) },
+            (GameStarting, GameStart) =>Ok(TurnIniting),
 
-            (TurnStarting, TurnStart(stdin)) => {
+            (TurnIniting, TurnInit(stdin)) => {
                 let game_state = parse_game_state_json(stdin);
 
-                let board_game_state = BoardState::load(game_state);
+                Ok(TurnStarting(BoardState::load(game_state)))
+            }
+            (TurnIniting, Sleep) => { sleep(Duration::from_secs(1)); Ok(TurnIniting) },
 
-                if let Some(optimal_move) = board_game_state.calculate_optimal_move(5) {
+            (TurnStarting(board_game_state), TurnStart) => {
+                if let Some(optimal_move) = board_game_state.calculate_optimal_move(0) {
                     let place_pieces_command_json = json::object! {
-                        "playerLPieceCoordinates": [optimal_move.lPiece[0].to_vec(), optimal_move.lPiece[1].to_vec(), optimal_move.lPiece[2].to_vec(), optimal_move.lPiece[3].to_vec()].to_vec(),
-                        "neutralPieceCoordinates": [optimal_move.neutralPieces[0].to_vec(), optimal_move.neutralPieces[1].to_vec()].to_vec()
+                        "PlayerLPieceCoordinates": [optimal_move.lPiece[0].to_vec(), optimal_move.lPiece[1].to_vec(), optimal_move.lPiece[2].to_vec(), optimal_move.lPiece[3].to_vec()].to_vec(),
+                        "NeutralPieceCoordinates": [optimal_move.neutralPieces[0].to_vec(), optimal_move.neutralPieces[1].to_vec()].to_vec()
                     };
                     writeln!(output, "{}", place_pieces_command_json)?;
+                } else {
+                    panic!("cannot find any moves");
                 }
 
                 writeln!(output, "turn-end")?;
+                output.flush()?;
+                io::stdout().flush()?;
                 Ok(TurnIniting)
             },
-            (TurnStarting, Sleep(seconds)) => { sleep(Duration::from_secs(*seconds)); Ok(TurnIniting) }
+            (TurnStarting(_), Sleep) => { sleep(Duration::from_secs(1)); Ok(TurnIniting) }
 
             (_, Throw) => panic!("on demand!"),
 
@@ -151,19 +148,19 @@ mod tests {
     #[test]
     #[should_panic]
     fn app_initing_cannot_sleep() {
-        State::AppIniting.next(&Transition::Sleep(0), &mut Vec::new()).unwrap();
+        State::AppIniting.next(&Transition::Sleep, &mut Vec::new()).unwrap();
     }
 
     #[test]
     #[should_panic]
     fn game_initing_cannot_sleep() {
-        State::GameIniting.next(&Transition::Sleep(0), &mut Vec::new()).unwrap();
+        State::GameIniting.next(&Transition::Sleep, &mut Vec::new()).unwrap();
     }
 
     #[test]
     #[should_panic]
     fn game_starting_cannot_sleep() {
-        State::GameStarting.next(&Transition::Sleep(0), &mut Vec::new()).unwrap();
+        State::GameStarting.next(&Transition::Sleep, &mut Vec::new()).unwrap();
     }
 
     #[test]

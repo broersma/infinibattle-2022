@@ -1,5 +1,6 @@
 use json;
 
+#[derive(Debug, PartialEq, Eq)]
 pub struct BoardState {
     board: [u8; 16],
     current_player: u8,
@@ -7,17 +8,17 @@ pub struct BoardState {
 }
 
 impl BoardState {
-    fn new() -> BoardState {
+    pub fn new() -> BoardState {
         BoardState { board: [4, 0, 0, 0, 1, 2, 2, 2, 1, 1, 1, 2, 0, 0, 0, 4], current_player: 1, scores: (0,0) }
     }
 
     pub fn load(board_state_json: json::JsonValue) -> BoardState {
-        let scores = (board_state_json["gameState"]["scorePlayer0"].as_i32().unwrap(), board_state_json["gameState"]["scorePlayer1"].as_i32().unwrap());
-        let current_player = board_state_json["player"].as_u8().unwrap();
+        let scores = (board_state_json["GameState"]["ScorePlayer0"].as_i32().unwrap(), board_state_json["GameState"]["ScorePlayer1"].as_i32().unwrap());
+        let current_player = board_state_json["Player"].as_u8().unwrap() + 1;
         let mut board_state = BoardState { board: [0; 16], current_player, scores };
         for y in 0..4 {
             for x in 0..4 {
-                board_state.board[y*4+x] = board_state_json["gameState"]["board"]["board"][y][x].as_u8().unwrap();
+                board_state.board[y*4+x] = board_state_json["GameState"]["Board"]["Board"][y][x].as_u8().unwrap();
             }
         }
         board_state
@@ -299,5 +300,81 @@ mod tests {
         assert_eq!(current_board_state.calculate_legal_moves().len(), 5 * 13);
 
         assert_eq!(current_board_state.calculate_legal_moves(), vec![BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[0, 0], [3, 3]] }, BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[1, 0], [3, 3]] }, BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[2, 0], [3, 3]] }, BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[3, 0], [3, 3]] }, BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[0, 1], [3, 3]] }, BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[1, 3], [3, 3]] }, BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[2, 3], [3, 3]] }, BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[0, 0], [1, 0]] }, BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[0, 0], [2, 0]] }, BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[0, 0], [3, 0]] }, BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[0, 0], [0, 1]] }, BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[0, 0], [1, 3]] }, BoardMove { lPiece: [[0, 2], [0, 3], [1, 2], [2, 2]], neutralPieces: [[0, 0], [2, 3]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[0, 0], [3, 3]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[1, 0], [3, 3]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[2, 0], [3, 3]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[3, 0], [3, 3]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[0, 1], [3, 3]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[0, 3], [3, 3]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[1, 3], [3, 3]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[0, 0], [1, 0]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[0, 0], [2, 0]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[0, 0], [3, 0]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[0, 0], [0, 1]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[0, 0], [0, 3]] }, BoardMove { lPiece: [[2, 2], [2, 3], [1, 2], [0, 2]], neutralPieces: [[0, 0], [1, 3]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[0, 0], [3, 3]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[1, 0], [3, 3]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[2, 0], [3, 3]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[3, 0], [3, 3]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[1, 2], [3, 3]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[2, 2], [3, 3]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[2, 3], [3, 3]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[0, 0], [1, 0]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[0, 0], [2, 0]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[0, 0], [3, 0]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[0, 0], [1, 2]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[0, 0], [2, 2]] }, BoardMove { lPiece: [[0, 3], [1, 3], [0, 2], [0, 1]], neutralPieces: [[0, 0], [2, 3]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[0, 0], [3, 3]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[1, 0], [3, 3]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[2, 0], [3, 3]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[3, 0], [3, 3]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[0, 1], [3, 3]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[1, 2], [3, 3]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[2, 2], [3, 3]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[0, 0], [1, 0]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[0, 0], [2, 0]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[0, 0], [3, 0]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[0, 0], [0, 1]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[0, 0], [1, 2]] }, BoardMove { lPiece: [[0, 3], [0, 2], [1, 3], [2, 3]], neutralPieces: [[0, 0], [2, 2]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[0, 0], [3, 3]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[1, 0], [3, 3]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[2, 0], [3, 3]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[3, 0], [3, 3]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[0, 1], [3, 3]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[0, 2], [3, 3]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[1, 2], [3, 3]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[0, 0], [1, 0]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[0, 0], [2, 0]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[0, 0], [3, 0]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[0, 0], [0, 1]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[0, 0], [0, 2]] }, BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[0, 0], [1, 2]] }]);
+    }
+
+    #[test]
+    fn begin_state_get_optimal_move() {
+        let current_board_state = BoardState::new();
+
+        assert_eq!(current_board_state.calculate_optimal_move(0), Some(BoardMove { lPiece: [[2, 3], [2, 2], [1, 3], [0, 3]], neutralPieces: [[0, 0], [1, 2]] }));
+    }
+
+    #[test]
+    fn load_board_state_works() {
+        let json_value = json::parse(r#"{
+            "GameState": {
+              "Board": {
+                "Board": [
+                  [4, 0, 0, 0],
+                  [1, 2, 2, 2],
+                  [1, 1, 1, 2],
+                  [0, 0, 0, 4]
+                ]
+              },
+              "ScorePlayer0": 0,
+              "ScorePlayer1": 0
+            },
+            "Turn": 2,
+            "Player": 0
+          }
+          "#).unwrap();
+
+        let board_state = BoardState::load(json_value);
+
+        assert_eq!(board_state, BoardState::new());
+        assert_eq!(board_state.current_player(), 1);
+        assert_eq!(board_state.other_player(), 2);
+    }
+
+    #[test]
+    fn load_board_state_works2() {
+        let json_value = json::parse(r#"{
+            "GameState": {
+              "Board": {
+                "Board": [
+                  [4, 0, 0, 0],
+                  [1, 2, 2, 2],
+                  [1, 1, 1, 2],
+                  [0, 0, 0, 4]
+                ]
+              },
+              "ScorePlayer0": 0,
+              "ScorePlayer1": 0
+            },
+            "Turn": 2,
+            "Player": 1
+          }
+          "#).unwrap();
+
+        let board_state = BoardState::load(json_value);
+
+        assert_eq!(board_state.current_player(), 2);
+        assert_eq!(board_state.other_player(), 1);
+    }
+
+    #[test]
+    fn erroneous_move() {
+
+        let board_state = BoardState::new();
+
+        let board_state = board_state.apply_move(&BoardMove{ lPiece: [[0,2],[1,2],[2,2],[0,3]], neutralPieces: [[0,0],[3,3]]});
+
+        assert_eq!(board_state, BoardState { board: [4, 0, 0, 0, 0, 2, 2, 2, 1, 1, 1, 2, 1, 0, 0, 4], current_player: 2, scores: (1, 0) });
+
+        let chosen_move = board_state.calculate_optimal_move(0).unwrap();
+
+        assert_ne!(chosen_move, BoardMove{ lPiece: [[2,2],[0,3],[1,3],[2,3]], neutralPieces: [[0,0],[1,2]]});
+
+        assert_eq!(chosen_move, BoardMove { lPiece: [[3, 1], [3, 0], [2, 1], [1, 1]], neutralPieces: [[0, 0], [2, 3]] });
     }
 }

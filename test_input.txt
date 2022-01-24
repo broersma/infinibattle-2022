@@ -1,92 +1,9 @@
 game-init
 game-start
-{
-  "gameState": {
-    "board": {
-      "board": [
-        [4, 0, 0, 0],
-        [1, 2, 2, 2],
-        [1, 1, 1, 2],
-        [0, 0, 0, 4]
-      ]
-    },
-    "scorePlayer0": 0, 
-    "scorePlayer1": 0
-  },
-  "turn": 0,
-  "player": 1
-}
+{"GameState":{"Board":{"Board":[[4,0,0,0],[1,2,2,2],[1,1,1,2],[0,0,0,4]]},"ScorePlayer0":0,"ScorePlayer1":0},"Turn":1,"Player":1}
 turn-init
 turn-start
-{
-  "gameState": {
-    "board": {
-      "board": [
-        [4, 0, 0, 0],
-        [1, 2, 2, 2],
-        [1, 1, 1, 2],
-        [0, 0, 0, 4]
-      ]
-    },
-    "scorePlayer0": 0, 
-    "scorePlayer1": 0
-  },
-  "turn": 1,
-  "player": 1
-}
+{"GameState":{"Board":{"Board":[[4,0,0,0],[1,2,2,2],[1,1,1,2],[0,0,0,4]]},"ScorePlayer0":0,"ScorePlayer1":0},"Turn":1,"Player":1}
 turn-init
-turn-start
-{
-  "gameState": {
-    "board": {
-      "board": [
-        [4, 0, 0, 0],
-        [1, 2, 2, 2],
-        [1, 1, 1, 2],
-        [0, 0, 0, 4]
-      ]
-    },
-    "scorePlayer0": 0, 
-    "scorePlayer1": 0
-  },
-  "turn": 2,
-  "player": 1
-}
-turn-init
-turn-start
-{
-  "gameState": {
-    "board": {
-      "board": [
-        [4, 0, 0, 0],
-        [1, 2, 2, 2],
-        [1, 1, 1, 2],
-        [0, 0, 0, 4]
-      ]
-    },
-    "scorePlayer0": 0, 
-    "scorePlayer1": 0
-  },
-  "turn": 3,
-  "player": 1
-}
-sleep 1
-turn-init
-turn-start
-{
-  "gameState": {
-    "board": {
-      "board": [
-        [4, 0, 0, 0],
-        [1, 2, 2, 2],
-        [1, 1, 1, 2],
-        [0, 0, 0, 4]
-      ]
-    },
-    "scorePlayer0": 0, 
-    "scorePlayer1": 0
-  },
-  "turn": 4,
-  "player": 1
-}
 throw
+sleep
